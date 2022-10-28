@@ -21,11 +21,10 @@ public class ManterGerente {
         if (login == null) {JOptionPane.showMessageDialog(null, nulo); return;}
         String senha = JOptionPane.showInputDialog("SENHA");
          if (senha == null) {JOptionPane.showMessageDialog(null, nulo); return;}
-         
-        Gerente gerenEnt = new Gerente(login, senha);
+
         ControllerGerente contgeren = new ControllerGerente();
         
-        if (contgeren.validar(gerenEnt)) {
+        if (contgeren.validar(login, senha)) {
             menuGeren();
         } else {
             JOptionPane.showMessageDialog(null,"Usuário Inválido");
@@ -117,9 +116,13 @@ public class ManterGerente {
     }
     
     public static void alterar() throws SQLException, ClassNotFoundException {
+        int id;
+        String nome;
+        String login;
+        String senha ;
         String nulo = "Por favor, digite todos os dados";
         ControllerGerente contgeren = new ControllerGerente();
-        int id;
+        
         try {
             id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
         } catch (HeadlessException | NumberFormatException e) {
@@ -132,9 +135,6 @@ public class ManterGerente {
             return;
         } else JOptionPane.showMessageDialog(null,gerenId.toString());
 
-        String nome = "";
-        String login = "";
-        String senha = "";
                 
         int opc;
         while (true) {
@@ -160,14 +160,20 @@ public class ManterGerente {
                 case 1 -> {
                     nome = JOptionPane.showInputDialog("NOME");
                     if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarNome(id, nome);
                 }
                 case 2 -> {
                     login = JOptionPane.showInputDialog("LOGIN");
                     if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarLogin(id, login);
                 }
                 case 3 -> {
                     senha = JOptionPane.showInputDialog("SENHA");
                     if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarSenha(id, senha);
                 }
                 case 4 -> {
                     nome = JOptionPane.showInputDialog("NOME");
@@ -176,6 +182,8 @@ public class ManterGerente {
                     if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     senha = JOptionPane.showInputDialog("SENHA");
                     if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarTudo(id, nome, login, senha);
                 }
                 case 5 -> stop = true;
             }
@@ -184,8 +192,6 @@ public class ManterGerente {
                 break;
             }        
             
-            Gerente gerenAlt = new Gerente(id, nome, login, senha);
-            contgeren.alterar(gerenAlt);
             gerenId = contgeren.buscarId(id);
             JOptionPane.showMessageDialog(null,gerenId.toString());
         }

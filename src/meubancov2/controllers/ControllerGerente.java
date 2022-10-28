@@ -12,10 +12,10 @@ import meubancov2.models.daos.DaoGerente;
 public class ControllerGerente {
     static DaoGerente daoGeren;
     
-    public Boolean validar(Gerente gerenEnt) throws SQLException, ClassNotFoundException {
+    public Boolean validar(String login, String senha) throws SQLException, ClassNotFoundException {
         boolean retorno = false;
         daoGeren = new DaoGerente(); 
-        Gerente gerenSaida = daoGeren.validar(gerenEnt);
+        Gerente gerenSaida = daoGeren.validar(login, senha);
         if(gerenSaida != null) retorno = true;
         return retorno;
     }
@@ -25,9 +25,24 @@ public class ControllerGerente {
         return daoGeren.inserir(geren);
     }
     
-    public void alterar (Gerente geren) throws SQLException, ClassNotFoundException {
+    public void alterarTudo (int id, String nome, String login, String senha) throws SQLException, ClassNotFoundException {
         daoGeren = new DaoGerente(); 
-        daoGeren.alterar(geren);
+        daoGeren.alterarTudo(id, nome, login, senha);
+    }
+    
+    public void alterarNome (int id, String nome) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        daoGeren.alterarNome(id, nome);
+    }
+    
+    public void alterarLogin (int id, String login) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        daoGeren.alterarLogin(id, login);
+    }
+    
+    public void alterarSenha (int id, String senha) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        daoGeren.alterarSenha(id, senha);
     }
     
     public Gerente buscarId(int id) throws SQLException, ClassNotFoundException {

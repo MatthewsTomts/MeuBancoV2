@@ -21,12 +21,12 @@ public class DaoGerente {
         this.con = new Conexao().getConnection();
     }
     
-    public Gerente validar(Gerente geren) throws SQLException {
+    public Gerente validar(String login, String senha) throws SQLException {
         String sql = "select * from Gerente WHERE login = ? AND senha = ?";
         Gerente gerenSaida;
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
-            stmt.setString(1,geren.getLogin());
-            stmt.setString(2,geren.getSenha());
+            stmt.setString(1, login);
+            stmt.setString(2, senha);
             ResultSet rs = stmt.executeQuery();
             gerenSaida = null;
             while (rs.next()) {
@@ -48,9 +48,9 @@ public class DaoGerente {
                 PreparedStatement stmt =
                         con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
             // seta os valores
-            stmt.setString(1,geren.getNome());
-            stmt.setString(2,geren.getLogin());
-            stmt.setString(3,geren.getSenha());
+            stmt.setString(1, geren.getNome());
+            stmt.setString(2, geren.getLogin());
+            stmt.setString(3, geren.getSenha());
             
             // executa
             stmt.executeUpdate();
@@ -63,59 +63,61 @@ public class DaoGerente {
         return geren;
     }
     
-    public void alterar(Gerente geren) throws SQLException{
+    public void alterarTudo(int id, String nome, String login, String senha) throws SQLException{
         String sql;
-        
-        if (!geren.getNome().equals("") && 
-                !geren.getLogin().equals("") &&
-                !geren.getSenha().equals("")) {
-            sql = "UPDATE Gerente SET nome = ?, login = ?, senha = ? WHERE id = ?";
-            try ( // prepared statement para inserção
-                PreparedStatement stmt = con.prepareStatement(sql)) {
-                // seta os valores
-                stmt.setString(1, geren.getNome());
-                stmt.setString(2, geren.getLogin());
-                stmt.setString(3, geren.getSenha());
-                stmt.setInt(4, geren.getId());
+        sql = "UPDATE Gerente SET nome = ?, login = ?, senha = ? WHERE id = ?";
+        try ( // prepared statement para inserção
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, nome);
+            stmt.setString(2, login);
+            stmt.setString(3, senha);
+            stmt.setInt(4, id);
 
-                // executa
-                stmt.execute();
-            }
-            
-        } else if (!geren.getNome().equals("")) {
-            sql = "UPDATE Gerente SET nome = ? WHERE id = ?";
-            try ( // prepared statement para inserção
-                PreparedStatement stmt = con.prepareStatement(sql)) {
-                // seta os valores
-                stmt.setString(1, geren.getNome());
-                stmt.setInt(2, geren.getId());
+            // executa
+            stmt.execute();
+        }
+    }
+    
+    public void alterarNome(int id, String nome) throws SQLException{
+        String sql;
+        sql = "UPDATE Gerente SET nome = ? WHERE id = ?";
+        try ( // prepared statement para inserção
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, nome);
+            stmt.setInt(2, id);
 
-                // executa
-                stmt.execute();
-            }
-        } else if (!geren.getLogin().equals("")) {
-            sql = "UPDATE Gerente SET login = ? WHERE id = ?";
-            try ( // prepared statement para inserção
-                PreparedStatement stmt = con.prepareStatement(sql)) {
-                // seta os valores
-                stmt.setString(1, geren.getLogin());
-                stmt.setInt(2, geren.getId());
+            // executa
+            stmt.execute();
+        }
+    }
+    
+    public void alterarLogin(int id, String login) throws SQLException{
+        String sql;
+        sql = "UPDATE Gerente SET login = ? WHERE id = ?";
+        try ( // prepared statement para inserção
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, login);
+            stmt.setInt(2, id);
 
-                // executa
-                stmt.execute();
-            }
-            
-        } else {
-            sql = "UPDATE Gerente SET senha = ? WHERE id = ?";
-            try ( // prepared statement para inserção
-                PreparedStatement stmt = con.prepareStatement(sql)) {
-                // seta os valores
-                stmt.setString(1, geren.getSenha());
-                stmt.setInt(2, geren.getId());
+            // executa
+            stmt.execute();
+        }
+    }
+    
+    public void alterarSenha(int id, String senha) throws SQLException{
+        String sql;
+        sql = "UPDATE Gerente SET senha = ? WHERE id = ?";
+        try ( // prepared statement para inserção
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, senha);
+            stmt.setInt(2, id);
 
-                // executa
-                stmt.execute();
-            }
+            // executa
+            stmt.execute();
         }
     }
     
@@ -198,6 +200,7 @@ public class DaoGerente {
         }
         return gerens;
     }
+    
    public List<Gerente> listar() throws SQLException{
         // usus: array armazena a lista de registros
 
