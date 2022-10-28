@@ -25,6 +25,21 @@ public class ControllerGerente {
         return daoGeren.inserir(geren);
     }
     
+    public Gerente buscarId(int id) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        return daoGeren.buscarId(id);
+    }
+    
+    public List<Gerente> buscarNome(String nome) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        return daoGeren.buscarNome(nome);
+    }
+    
+    public List<Gerente> buscarLogin(String login) throws SQLException, ClassNotFoundException {
+        daoGeren = new DaoGerente(); 
+        return daoGeren.buscarLogin(login);
+    }
+    
     public void alterarTudo (int id, String nome, String login, String senha) throws SQLException, ClassNotFoundException {
         daoGeren = new DaoGerente(); 
         daoGeren.alterarTudo(id, nome, login, senha);
@@ -45,29 +60,14 @@ public class ControllerGerente {
         daoGeren.alterarSenha(id, senha);
     }
     
-    public Gerente buscarId(int id) throws SQLException, ClassNotFoundException {
-        daoGeren = new DaoGerente(); 
-        return daoGeren.buscarId(id);
-    }
-    
-    public List<Gerente> buscarNome(String nome) throws SQLException, ClassNotFoundException {
-        daoGeren = new DaoGerente(); 
-        return daoGeren.buscarNome(nome);
-    }
-    
-    public List<Gerente> buscarLogin(String login) throws SQLException, ClassNotFoundException {
-        daoGeren = new DaoGerente(); 
-        return daoGeren.buscarLogin(login);
-    }
-    
     public List<Gerente> listar () throws SQLException, ClassNotFoundException {
         daoGeren = new DaoGerente(); 
         return daoGeren.listar();
     }
     
-    public void excluir(Gerente geren) throws SQLException, ClassNotFoundException {
+    public void excluir(int id) throws SQLException, ClassNotFoundException {
         daoGeren = new DaoGerente(); 
-        daoGeren.excluir(geren);
+        daoGeren.excluir(id);
     }
     
 }

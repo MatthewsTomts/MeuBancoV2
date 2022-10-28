@@ -94,6 +94,8 @@ public class ManterGerente {
     
     public static void inserir() throws SQLException, ClassNotFoundException {
         String nulo = "Por favor, digite todos os dados";
+        ControllerGerente contgeren = new ControllerGerente();
+        
         String nome = JOptionPane.showInputDialog("NOME");
         if (nome == null) {JOptionPane.showMessageDialog(null, nulo); return;}
 
@@ -104,7 +106,6 @@ public class ManterGerente {
         if (senha == null) {JOptionPane.showMessageDialog(null, nulo); return;}
         
         Gerente geren = new Gerente(nome, login, senha);
-        ControllerGerente contgeren = new ControllerGerente();
         try {
             geren = contgeren.inserir(geren);
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -113,88 +114,6 @@ public class ManterGerente {
             return;
         }
         JOptionPane.showMessageDialog(null,geren.toString());
-    }
-    
-    public static void alterar() throws SQLException, ClassNotFoundException {
-        int id;
-        String nome;
-        String login;
-        String senha ;
-        String nulo = "Por favor, digite todos os dados";
-        ControllerGerente contgeren = new ControllerGerente();
-        
-        try {
-            id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
-        } catch (HeadlessException | NumberFormatException e) {
-            JOptionPane.showMessageDialog(null,"Por favor, digite um ID");
-            return;
-        }
-        Gerente gerenId = contgeren.buscarId(id);
-        if (gerenId == null) {
-            JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
-            return;
-        } else JOptionPane.showMessageDialog(null,gerenId.toString());
-
-                
-        int opc;
-        while (true) {
-            boolean stop = false;
-            String msg = """
-                         O que voc\u00ea deseja alterar?:
-                          1 - Nome 
-                          2 - Login 
-                          3 - Senha
-                          4 - Tudo
-                          5 - Voltar
-                         """;
-            String result = JOptionPane.showInputDialog(msg);
-
-            try {
-                opc = Integer.parseInt(result);
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null,"Por favor, escolha uma opção");
-                continue;
-            }
-
-            switch (opc) {
-                case 1 -> {
-                    nome = JOptionPane.showInputDialog("NOME");
-                    if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    
-                    contgeren.alterarNome(id, nome);
-                }
-                case 2 -> {
-                    login = JOptionPane.showInputDialog("LOGIN");
-                    if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    
-                    contgeren.alterarLogin(id, login);
-                }
-                case 3 -> {
-                    senha = JOptionPane.showInputDialog("SENHA");
-                    if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    
-                    contgeren.alterarSenha(id, senha);
-                }
-                case 4 -> {
-                    nome = JOptionPane.showInputDialog("NOME");
-                    if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    login = JOptionPane.showInputDialog("LOGIN");
-                    if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    senha = JOptionPane.showInputDialog("SENHA");
-                    if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    
-                    contgeren.alterarTudo(id, nome, login, senha);
-                }
-                case 5 -> stop = true;
-            }
-            
-            if (stop) {
-                break;
-            }        
-            
-            gerenId = contgeren.buscarId(id);
-            JOptionPane.showMessageDialog(null,gerenId.toString());
-        }
     }
     
     public static void buscar() throws SQLException, ClassNotFoundException {
@@ -209,7 +128,7 @@ public class ManterGerente {
         while (true) {
             boolean stop = false;
             String msg = """
-                         O que voc\u00ea deseja pesquisa?:
+                         O que você deseja pesquisa?:
                           1 - Id 
                           2 - Nome 
                           3 - Login
@@ -279,6 +198,89 @@ public class ManterGerente {
         }
     }
     
+    public static void alterar() throws SQLException, ClassNotFoundException {
+        int id;
+        String nome;
+        String login;
+        String senha ;
+        String nulo = "Por favor, digite todos os dados";
+        ControllerGerente contgeren = new ControllerGerente();
+        
+        try {
+            id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,"Por favor, digite um ID");
+            return;
+        }
+        
+        Gerente gerenId = contgeren.buscarId(id);
+        if (gerenId == null) {
+            JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
+            return;
+        } else JOptionPane.showMessageDialog(null,gerenId.toString());
+
+                
+        int opc;
+        while (true) {
+            boolean stop = false;
+            String msg = """
+                         O que você deseja alterar?:
+                          1 - Nome 
+                          2 - Login 
+                          3 - Senha
+                          4 - Tudo
+                          5 - Voltar
+                         """;
+            String result = JOptionPane.showInputDialog(msg);
+
+            try {
+                opc = Integer.parseInt(result);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null,"Por favor, escolha uma opção");
+                continue;
+            }
+
+            switch (opc) {
+                case 1 -> {
+                    nome = JOptionPane.showInputDialog("NOME");
+                    if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarNome(id, nome);
+                }
+                case 2 -> {
+                    login = JOptionPane.showInputDialog("LOGIN");
+                    if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarLogin(id, login);
+                }
+                case 3 -> {
+                    senha = JOptionPane.showInputDialog("SENHA");
+                    if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarSenha(id, senha);
+                }
+                case 4 -> {
+                    nome = JOptionPane.showInputDialog("NOME");
+                    if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    login = JOptionPane.showInputDialog("LOGIN");
+                    if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    senha = JOptionPane.showInputDialog("SENHA");
+                    if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contgeren.alterarTudo(id, nome, login, senha);
+                }
+                case 5 -> stop = true;
+            }
+            
+            if (stop) {
+                break;
+            }        
+            
+            gerenId = contgeren.buscarId(id);
+            JOptionPane.showMessageDialog(null,gerenId.toString());
+        }
+    }
+    
     public static void listar() throws SQLException, ClassNotFoundException {
         String lista = "";
         ControllerGerente contgeren = new ControllerGerente();
@@ -305,20 +307,21 @@ public class ManterGerente {
             return;
         } else JOptionPane.showMessageDialog(null,gerenId.toString());
         
-        Gerente geren = new Gerente(id);
         Boolean result = false;
         try {
-            contgeren.excluir(geren);
+            contgeren.excluir(id);
         } catch (SQLIntegrityConstraintViolationException e) {
             int alt = JOptionPane.showConfirmDialog(null,"Não é possível excluir" +
                     " este gerente, pois este ainda gerencia contas,\n" +
                     " deseja alterar o gerente responsável por estas contas?");
-            if (alt == JOptionPane.YES_OPTION) result = AlterarGerente(geren.getId());
+            if (alt == JOptionPane.YES_OPTION) result = AlterarGerente(id);
             if (result) {
-                contgeren.excluir(geren);
-                JOptionPane.showMessageDialog(null,geren.toString());
+                contgeren.excluir(id);
+            } else {
+                return;
             }
         }
+        JOptionPane.showMessageDialog(null, "Gerente Exluído.");
     }
     
     public static Boolean AlterarGerente(int idAntigo) throws SQLException, ClassNotFoundException {

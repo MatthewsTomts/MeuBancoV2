@@ -73,6 +73,18 @@ public class DaoConta {
         return conta;
     }
     
+    public void excluirContas(int idCliente) throws SQLException {
+        String sql = "DELETE FROM Conta WHERE idCliente = ?";
+        // seta os valores
+        try ( // prepared statement para inserção
+                PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setInt(1, idCliente);
+            // executa
+            stmt.execute();
+        }
+    }
+    
     public Conta buscarId(int id) throws SQLException{
         String sql = "SELECT * FROM Conta WHERE id like ?";
         Conta contaSaida;

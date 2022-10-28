@@ -118,7 +118,7 @@ public class ManterConta {
         
         Conta conta = new Conta(id);
         ControllerConta contclien = new ControllerConta();
-        conta = contclien.buscar(conta);
+        conta = contclien.buscarId(id);
         JOptionPane.showMessageDialog(null, conta.toString());
     }
     

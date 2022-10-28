@@ -32,6 +32,11 @@ public class ControllerConta {
         return daoConta.excluir(conta);
     }
     
+    public void excluirContas(int idCliente) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        daoConta.excluirContas(idCliente);
+    }
+    
     public Conta buscarId(int id) throws SQLException, ClassNotFoundException {
         daoConta = new DaoConta(); 
         return daoConta.buscarId(id);
