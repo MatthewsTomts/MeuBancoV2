@@ -5,24 +5,24 @@ package meubancov2.models.beans;
  * @author scar
  */
 public class Conta {
+    private int id;
     private int idCliente;
     private int idGerente;
-    private int id;
     private float valor;
-    private String tipo;
+    private Tipo tipo;
 
     public Conta(int id) {
         this.id = id;
     }
 
-    public Conta(int idGerente, int idCliente, float valor, String tipo) {
+    public Conta(int idGerente, int idCliente, float valor, Tipo tipo) {
         this.idGerente = idGerente;
         this.idCliente = idCliente;
         this.valor = valor;
         this.tipo = tipo;
     }
 
-    public Conta(int idCliente, int idGerente, int id, float valor, String tipo) {
+    public Conta( int id, int idCliente, int idGerente, float valor, Tipo tipo) {
         this.idCliente = idCliente;
         this.idGerente = idGerente;
         this.id = id;
@@ -30,6 +30,14 @@ public class Conta {
         this.tipo = tipo;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getIdCliente() {
         return idCliente;
     }
@@ -46,14 +54,6 @@ public class Conta {
         this.idGerente = idGerente;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public float getValor() {
         return valor;
     }
@@ -62,11 +62,11 @@ public class Conta {
         this.valor = valor;
     }
 
-    public String getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(Tipo tipo) {
         this.tipo = tipo;
     }
 
@@ -74,7 +74,7 @@ public class Conta {
     public String toString() {
         return """
                Conta:
-               Id do Cliente: """ + idCliente + ", Id do Gerente: " + idGerente +
-                ", Id da Conta: " + id + ", Valor: " + valor + ", Tipo: " + tipo;
+               Id do Conta: """ + id + ", Id do Cliente: " + idCliente +
+                ", Id da Gerente: " + idGerente + ", Valor: " + valor + ", Tipo: " + tipo;
     }
 }

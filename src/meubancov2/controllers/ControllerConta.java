@@ -3,6 +3,7 @@ package meubancov2.controllers;
 import java.sql.SQLException;
 import java.util.List;
 import meubancov2.models.beans.Conta;
+import meubancov2.models.beans.Tipo;
 import meubancov2.models.daos.DaoConta;
 
 /**
@@ -17,9 +18,29 @@ public class ControllerConta {
         return daoConta.inserir(conta);
     }
     
-    public Conta alterar (Conta conta) throws SQLException, ClassNotFoundException {
+    public void alterarTudo(int id, int idCliente, int idGerente, Float valor, Tipo tipo) throws SQLException, ClassNotFoundException {
         daoConta = new DaoConta(); 
-        return daoConta.alterar(conta);
+        daoConta.alterarTudo(id, idCliente, idGerente, valor, tipo);
+    }
+    
+    public void alterarIdClien(int id, int idCliente) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        daoConta.alterarIdClien(id, idCliente);
+    }
+    
+    public void alterarIdGeren(int id, int idGerente) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        daoConta.alterarIdGeren(id, idGerente);
+    }
+    
+    public void alterarValor(int id, Float valor) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        daoConta.alterarValor(id, valor);
+    }
+    
+    public void alterarTipo(int id, Tipo tipo) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        daoConta.alterarTipo(id, tipo);
     }
     
     public List<Conta> listar () throws SQLException, ClassNotFoundException {
@@ -27,9 +48,9 @@ public class ControllerConta {
         return daoConta.listar();
     }
     
-    public Conta excluir(Conta conta) throws SQLException, ClassNotFoundException {
+    public void excluir(int id) throws SQLException, ClassNotFoundException {
         daoConta = new DaoConta(); 
-        return daoConta.excluir(conta);
+        daoConta.excluir(id);
     }
     
     public void excluirContas(int idCliente) throws SQLException, ClassNotFoundException {
@@ -42,14 +63,19 @@ public class ControllerConta {
         return daoConta.buscarId(id);
     }
     
-    public Conta buscarNome(String nome) throws SQLException, ClassNotFoundException {
+    public Conta buscarIdCliente(int idCliente) throws SQLException, ClassNotFoundException {
         daoConta = new DaoConta(); 
-        return daoConta.buscarNome(nome);
+        return daoConta.buscarIdCliente(idCliente);
     }
     
-    public Conta buscarLogin(String login) throws SQLException, ClassNotFoundException {
+    public Conta buscarIdGerente(int idGerente) throws SQLException, ClassNotFoundException {
         daoConta = new DaoConta(); 
-        return daoConta.buscarLogin(login);
+        return daoConta.buscarIdGerente(idGerente);
+    }
+    
+    public List<Conta> buscarTipo(Tipo tipo) throws SQLException, ClassNotFoundException {
+        daoConta = new DaoConta(); 
+        return daoConta.buscarTipo(tipo);
     }
     
     public void alterarGerente (int idNovo, int idAntigo) throws SQLException, ClassNotFoundException {

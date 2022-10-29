@@ -4,8 +4,6 @@ import java.io.IOException;
 import meubancov2.views.ManterGerente;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import meubancov2.views.ManterCliente;
-import meubancov2.views.ManterConta;
 
 /**
  *

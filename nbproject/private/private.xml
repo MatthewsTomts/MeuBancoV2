@@ -3,9 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/models/daos/DaoGerente.java</file>
-            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/views/ManterGerente.java</file>
-            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/controllers/ControllerGerente.java</file>
+            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/views/ManterConta.java</file>
+            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/controllers/ControllerConta.java</file>
+            <file>file:/home/scar/NetBeansProjects/MeuBancoV2/src/meubancov2/models/daos/DaoConta.java</file>
         </group>
     </open-files>
 </project-private>
