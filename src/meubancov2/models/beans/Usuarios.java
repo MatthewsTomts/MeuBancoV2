@@ -4,39 +4,42 @@ package meubancov2.models.beans;
  *
  * @author scar
  */
-public class Gerente {
+public class Usuarios {
     private int id;
     private String nome;
     private String login;
     private String senha;
+    private UsuTipo tipo;
 
-    public Gerente() {
+    public Usuarios() {
     }
 
-    public Gerente(String login) {
+    public Usuarios(String login) {
         this.login = login;
     }
 
-    public Gerente(int id) {
+    public Usuarios(int id) {
         this.id = id;
     }
 
-    public Gerente(String login, String senha) {
+    public Usuarios(String login, String senha) {
         this.login = login;
         this.senha = senha;
     }
     
-    public Gerente(String nome, String login, String senha) {
+    public Usuarios(String nome, String login, String senha, UsuTipo tipo) {
         this.nome = nome;
         this.login = login;
         this.senha = senha;
+        this.tipo = tipo;
     }
 
-    public Gerente(int id, String nome, String login, String senha) {
+    public Usuarios(int id, String nome, String login, String senha, UsuTipo tipo) {
         this.id = id;
         this.nome = nome;
         this.login = login;
         this.senha = senha;
+        this.tipo = tipo;
     }
     
     
@@ -71,14 +74,21 @@ public class Gerente {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public UsuTipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(UsuTipo tipo) {
+        this.tipo = tipo;
+    }
     
 
     @Override
     public String toString() {
-        return """
-               
-               Gerente:
-               id: """ + id + ", nome: " + nome + ", login: " + login + ", senha: " + senha;
+        return "Gerente:\n" +
+               "id: " + id + ", nome: " + nome + ", login: " + login + ", senha: " + senha +
+               ", tipo: " + tipo;
     }
     
 }

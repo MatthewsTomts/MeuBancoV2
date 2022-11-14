@@ -4,25 +4,25 @@ package meubancov2.models.beans;
  *
  * @author scar
  */
-public class Conta {
+public class Contas {
     private int id;
     private int idCliente;
     private int idGerente;
     private float valor;
-    private Tipo tipo;
+    private ContaTipo tipo;
 
-    public Conta(int id) {
+    public Contas(int id) {
         this.id = id;
     }
 
-    public Conta(int idGerente, int idCliente, float valor, Tipo tipo) {
+    public Contas(int idGerente, int idCliente, float valor, ContaTipo tipo) {
         this.idGerente = idGerente;
         this.idCliente = idCliente;
         this.valor = valor;
         this.tipo = tipo;
     }
 
-    public Conta( int id, int idCliente, int idGerente, float valor, Tipo tipo) {
+    public Contas( int id, int idCliente, int idGerente, float valor, ContaTipo tipo) {
         this.idCliente = idCliente;
         this.idGerente = idGerente;
         this.id = id;
@@ -62,19 +62,18 @@ public class Conta {
         this.valor = valor;
     }
 
-    public Tipo getTipo() {
+    public ContaTipo getTipo() {
         return tipo;
     }
 
-    public void setTipo(Tipo tipo) {
+    public void setTipo(ContaTipo tipo) {
         this.tipo = tipo;
     }
 
     @Override
     public String toString() {
-        return """
-               Conta:
-               Id do Conta: """ + id + ", Id do Cliente: " + idCliente +
+        return "Conta: \n" +
+               "Id do Conta: " + id + ", Id do Cliente: " + idCliente +
                 ", Id da Gerente: " + idGerente + ", Valor: " + valor + ", Tipo: " + tipo;
     }
 }

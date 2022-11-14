@@ -5,15 +5,15 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import javax.swing.JOptionPane;
-import meubancov2.controllers.ControllerCliente;
-import meubancov2.controllers.ControllerConta;
-import meubancov2.models.beans.Cliente;
+import meubancov2.controllers.ControllerClientes;
+import meubancov2.controllers.ControllerContas;
+import meubancov2.models.beans.Clientes;
 
 /**
  *
  * @author scar
  */
-public class ManterCliente {
+public class ManterClientes {
     
     public static void menu() throws SQLException, ClassNotFoundException {
         int opc = 7;
@@ -50,7 +50,7 @@ public class ManterCliente {
     }
     
     public static void inserir() throws SQLException, ClassNotFoundException {
-        ControllerCliente contclien = new ControllerCliente();
+        ControllerClientes contclien = new ControllerClientes();
         
         String nome = JOptionPane.showInputDialog("NOME");
         if (nome == null) return;
@@ -67,7 +67,7 @@ public class ManterCliente {
         String telefone = JOptionPane.showInputDialog("TELEFONE");
         if (telefone == null) return;
         
-        Cliente clien = new Cliente(nome, rg, cpf, email, telefone);
+        Clientes clien = new Clientes(nome, rg, cpf, email, telefone);
         clien = contclien.inserir(clien);
         JOptionPane.showMessageDialog(null, clien.toString());
     }
@@ -98,15 +98,15 @@ public class ManterCliente {
             
             if (lista.equals("")) {
                 break;
-            }     
+            }
             
-            JOptionPane.showMessageDialog(null,lista);
+            JOptionPane.showMessageDialog(null, lista);
         }
     }
     
     public static void alterar() throws SQLException, ClassNotFoundException {
         int id;
-        ControllerCliente contclien = new ControllerCliente();
+        ControllerClientes contclien = new ControllerClientes();
         
         try {
             id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
@@ -115,7 +115,7 @@ public class ManterCliente {
             return;
         }
         
-        Cliente clienId = contclien.buscarId(id);
+        Clientes clienId = contclien.buscarId(id);
         if (clienId == null) {
             JOptionPane.showMessageDialog(null,"Cliente não encontrado.");
             return;
@@ -141,25 +141,21 @@ public class ManterCliente {
                 JOptionPane.showMessageDialog(null,"Por favor, escolha uma opção");
                 continue;
             }
-
-            String lista = AlterarOpc(opc, id);
-            
-            if (lista.equals("")) {
+  
+            if (AlterarOpc(opc, id)) {
                 break;
-            }     
-            
-            JOptionPane.showMessageDialog(null, lista);
+            }
+            clienId = contclien.buscarId(id);
+            JOptionPane.showMessageDialog(null,clienId);
         }
         
-        clienId = contclien.buscarId(id);
-        JOptionPane.showMessageDialog(null,clienId);
     }
     
     public static void listar() throws SQLException, ClassNotFoundException {
         String lista = "";
-        ControllerCliente contclien = new ControllerCliente();
-        List<Cliente> listaClien = contclien.listar();
-        for (Cliente clienSaida : listaClien) {
+        ControllerClientes contclien = new ControllerClientes();
+        List<Clientes> listaClien = contclien.listar();
+        for (Clientes clienSaida : listaClien) {
             lista = lista + clienSaida.toString() + '\n';
         }
         JOptionPane.showMessageDialog(null,lista);
@@ -174,8 +170,8 @@ public class ManterCliente {
             return;
         }
         
-        ControllerCliente contclien = new ControllerCliente();
-        Cliente clienId = contclien.buscarId(id);
+        ControllerClientes contclien = new ControllerClientes();
+        Clientes clienId = contclien.buscarId(id);
         if (clienId == null) {
             JOptionPane.showMessageDialog(null,"Cliente não encontrado.");
             return;
@@ -187,7 +183,7 @@ public class ManterCliente {
             int alt = JOptionPane.showConfirmDialog(null,"Não é possível excluir" +
                     " este Cliente, pois este ainda tem contas ativas,\n" +
                     " deseja excluir estas contas?");
-            ControllerConta contconta = new ControllerConta();
+            ControllerContas contconta = new ControllerContas();
             if (alt == JOptionPane.YES_OPTION) {
                 contconta.excluirContas(id);
                 contclien.excluir(id);
@@ -207,9 +203,9 @@ public class ManterCliente {
         String telefone;
         
         String lista = "";
-        List<Cliente> clien;
+        List<Clientes> clien;
         String nulo = "Digite um valor, por favor";
-        ControllerCliente contclien = new ControllerCliente();
+        ControllerClientes contclien = new ControllerClientes();
         
         switch (opc) {
             case 1 -> {
@@ -220,7 +216,7 @@ public class ManterCliente {
                     return lista;
                 }
 
-                Cliente clienId = contclien.buscarId(id);
+                Clientes clienId = contclien.buscarId(id);
                 if (clienId == null) {
                     lista = "Cliente não encontrado.";
                 } else {
@@ -236,35 +232,32 @@ public class ManterCliente {
                 if (clien.isEmpty()) {
                     lista = "Cliente não encontrado.";
                 } else {
-                    for (Cliente clienSaida : clien) {
+                    for (Clientes clienSaida : clien) {
                         lista = lista + "\n" + clienSaida.toString();
                     }
                 }
-                break;
             }
             case 3 -> {
                 rg = JOptionPane.showInputDialog("RG");
                 if (rg == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
 
-                Cliente clienRg = contclien.buscarRg(rg);
+                Clientes clienRg = contclien.buscarRg(rg);
                 if (clienRg == null) {
                     lista = "Cliente não encontrado.";
                 } else {
                     lista = clienRg.toString();
                 }
-                break;
             }
             case 4 -> {
                 cpf = JOptionPane.showInputDialog("CPF");
                 if (cpf == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
 
-                Cliente clienCpf = contclien.buscarCpf(cpf);
+                Clientes clienCpf = contclien.buscarCpf(cpf);
                 if (clienCpf == null) {
                     lista = "Cliente não encontrado.";
                 } else {
                     lista = clienCpf.toString();
                 }
-                break;
             }
             case 5 -> {
                 email = JOptionPane.showInputDialog("EMAIL");
@@ -275,25 +268,23 @@ public class ManterCliente {
                 if (clien.isEmpty()) {
                     lista = "Cliente não encontrado.";
                 } else {
-                    for (Cliente clienSaida : clien) {
+                    for (Clientes clienSaida : clien) {
                         lista = lista + clienSaida.toString() + '\n';
                     }
                 }
-                break;
             }
             case 6 -> {
                 telefone = JOptionPane.showInputDialog("TELEFONE");
                 if (telefone == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
 
-                Cliente clienTelefone = contclien.buscarTelefone(telefone);
+                Clientes clienTelefone = contclien.buscarTelefone(telefone);
                 if (clienTelefone == null) {
                     lista = "Cliente não encontrado.";
                 } else {
                     lista = clienTelefone.toString();
                 }
-                break;
             }
-            case 7 -> {return lista;}
+            case 7 -> {return "";}
             default -> {
                 JOptionPane.showMessageDialog(null,"Digite um valor válido"); 
 
@@ -302,78 +293,71 @@ public class ManterCliente {
         return lista;
     }
     
-    public static String AlterarOpc(int opc, int id) throws SQLException, ClassNotFoundException {
+    public static Boolean AlterarOpc(int opc, int id) throws SQLException, ClassNotFoundException {
         String nome;
         String rg;
         String cpf;
         String email;
         String telefone;
         
-        String lista = "";
         String nulo = "Digite um valor, por favor";
-        ControllerCliente contclien = new ControllerCliente();
+        ControllerClientes contclien = new ControllerClientes();
         
         switch (opc) {
             case 1 -> {
                 nome = JOptionPane.showInputDialog("NOME");
-                if (nome == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (nome == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarNome(id, nome);
-                break;
             }
             case 2 -> {
                 rg = JOptionPane.showInputDialog("RG");
-                if (rg == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (rg == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarRg(id, rg);
-                break;
             }
             case 3 -> {
                 cpf = JOptionPane.showInputDialog("CPF");
-                if (cpf == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (cpf == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarCpf(id, cpf);
-                break;
             }
             case 4 -> {
                 email = JOptionPane.showInputDialog("EMAIL");
-                if (email == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (email == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarEmail(id, email);
-                break;
             }
             case 5 -> {
                 telefone = JOptionPane.showInputDialog("TELEFONE");
-                if (telefone == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (telefone == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarTelefone(id, telefone);
-                break;
             }
             case 6 -> {
                 nome = JOptionPane.showInputDialog("NOME");
-                if (nome == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (nome == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 rg = JOptionPane.showInputDialog("RG");
-                if (rg == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (rg == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 cpf = JOptionPane.showInputDialog("CPF");
-                if (cpf == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (cpf == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 email = JOptionPane.showInputDialog("EMAIL");
-                if (email == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (email == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 telefone = JOptionPane.showInputDialog("TELEFONE");
-                if (telefone == null) {JOptionPane.showMessageDialog(null, nulo); return lista;}
+                if (telefone == null) {JOptionPane.showMessageDialog(null, nulo); break;}
 
                 contclien.alterarTudo(id, nome, rg, cpf, email, telefone);
-                break;
             }
-            case 7 -> {return lista;}
+            case 7 -> {return true;}
             default -> {
                 JOptionPane.showMessageDialog(null,"Digite um valor válido"); 
 
             }
         }
-        return lista;
+        return false;
     }
 }

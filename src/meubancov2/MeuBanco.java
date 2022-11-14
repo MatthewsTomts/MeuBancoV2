@@ -1,7 +1,7 @@
 package meubancov2;
 
 import java.io.IOException;
-import meubancov2.views.ManterGerente;
+import meubancov2.views.ManterUsuarios;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
@@ -28,7 +28,7 @@ public class MeuBanco {
         
         int opc = 0;
         while (opc != 4) {
-            String msg = "Usuário:\n 1 - Administrador\n 2 - Gerente\n 3 - Sair";
+            String msg = "Usuário:\n 1 - Entrar\n 2 - Sair";
             String result = JOptionPane.showInputDialog(msg);
 
             try {
@@ -39,9 +39,8 @@ public class MeuBanco {
             }
 
             switch (opc) {
-                case 1 ->loginAdm();
-                case 2 -> ManterGerente.validar();
-                case 3 -> {
+                case 1 -> ManterUsuarios.validar();
+                case 2 -> {
                     int sair = JOptionPane.showConfirmDialog(null,"Deseja Sair?");
                     if (sair == JOptionPane.YES_OPTION) opc = 4;
                 }
@@ -61,7 +60,7 @@ public class MeuBanco {
         if (senha == null) {JOptionPane.showMessageDialog(null, nulo); return;}
 
         if (login.equals("t") && senha.equals("t")) {
-            ManterGerente.menuAdm();
+            ManterUsuarios.menuAdm();
         } else {
             JOptionPane.showMessageDialog(null,"Usuario Inválido");            
         }

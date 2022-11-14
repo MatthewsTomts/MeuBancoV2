@@ -4,7 +4,7 @@ package meubancov2.models.beans;
  *
  * @author scar
  */
-public class Cliente {
+public class Clientes {
     private int id;
     private String nome;
     private String rg;
@@ -12,11 +12,11 @@ public class Cliente {
     private String email;
     private String telefone;
 
-    public Cliente(int id) {
+    public Clientes(int id) {
         this.id = id;
     }
 
-    public Cliente(String nome, String rg, String cpf, String email,
+    public Clientes(String nome, String rg, String cpf, String email,
             String telefone) {
         this.nome = nome;
         this.rg = rg;
@@ -25,7 +25,7 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-    public Cliente(int id, String nome, String rg, String cpf, String email,
+    public Clientes(int id, String nome, String rg, String cpf, String email,
             String telefone) {
         this.id = id;
         this.nome = nome;
@@ -85,9 +85,8 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return """
-               Cliente:
-               Id: """ + id + ", Nome: " + nome + ", RG: " + rg +
+        return "Cliente:\n" +
+               "Id: " + id + ", Nome: " + nome + ", RG: " + rg +
                 ", CPF: " + cpf + ", Email: " + email + ", Telefone: " + telefone;
     }
 }

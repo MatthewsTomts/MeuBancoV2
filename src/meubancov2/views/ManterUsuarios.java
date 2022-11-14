@@ -5,15 +5,16 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import javax.swing.JOptionPane;
-import meubancov2.controllers.ControllerConta;
-import meubancov2.controllers.ControllerGerente;
-import meubancov2.models.beans.Gerente;
+import meubancov2.controllers.ControllerContas;
+import meubancov2.controllers.ControllerUsuarios;
+import meubancov2.models.beans.UsuTipo;
+import meubancov2.models.beans.Usuarios;
 
 /**
  *
  * @author scar
  */
-public class ManterGerente {
+public class ManterUsuarios {
     
     public static void validar() throws SQLException, ClassNotFoundException {
         String nulo = "Por favor, digite o login e senha";
@@ -22,16 +23,16 @@ public class ManterGerente {
         String senha = JOptionPane.showInputDialog("SENHA");
          if (senha == null) {JOptionPane.showMessageDialog(null, nulo); return;}
 
-        ControllerGerente contgeren = new ControllerGerente();
+        ControllerUsuarios contusu = new ControllerUsuarios();
         
-        if (contgeren.validar(login, senha)) {
-            menuGeren();
-        } else {
-            JOptionPane.showMessageDialog(null,"Usuário Inválido");
+        switch (contusu.validar(login, senha)) {
+            case "adm" -> menuAdm();
+            case "geren" -> menuUsu();
+            default -> JOptionPane.showMessageDialog(null,"Usuário Inválido");
         }
     }
     
-    public static void menuGeren() throws SQLException, ClassNotFoundException {
+    public static void menuUsu() throws SQLException, ClassNotFoundException {
         int opc = 4;
         while (opc != 0) {
             String msg = "Opções:\n 1 - Cliente \n 2 - Conta \n 3 - Voltar";
@@ -45,9 +46,9 @@ public class ManterGerente {
             }
 
             switch (opc) {
-                case 1 -> ManterCliente.menu();
-                case 2 -> ManterConta.menu();
-                case 3 -> {System.out.println("Voltando..."); opc = 0;}
+                case 1 -> ManterClientes.menu();
+                case 2 -> ManterContas.menu();
+                case 3 -> {opc = 0;}
                 default -> {
                     JOptionPane.showMessageDialog(null,"Opção inválido");
                     opc = 1;
@@ -60,10 +61,10 @@ public class ManterGerente {
         int opc = 0;
         while (opc != 6) {
             String msg = """
-                        O que gostaria de fazer em relação aos gerentes:
+                        O que gostaria de fazer em relação aos usuarios:
                             1 - Inserir
-                            2 - Alterar
-                            3 - Buscar
+                            2 - Buscar
+                            3 - Alterar
                             4 - Listar 
                             5 - Excluir
                             6 - Voltar""";
@@ -79,8 +80,8 @@ public class ManterGerente {
         
             switch (opc) {
                 case 1 -> inserir();
-                case 2 -> alterar();
-                case 3 -> buscar();
+                case 2 -> buscar();
+                case 3 -> alterar();
                 case 4 -> listar();
                 case 5 -> excluir();
                 case 6 -> System.out.println("Voltando...");
@@ -94,7 +95,8 @@ public class ManterGerente {
     
     public static void inserir() throws SQLException, ClassNotFoundException {
         String nulo = "Por favor, digite todos os dados";
-        ControllerGerente contgeren = new ControllerGerente();
+        ControllerUsuarios contusu = new ControllerUsuarios();
+        String[] tipos = {"ADMINISTRADOR", "GERENTE"};
         
         String nome = JOptionPane.showInputDialog("NOME");
         if (nome == null) {JOptionPane.showMessageDialog(null, nulo); return;}
@@ -105,15 +107,25 @@ public class ManterGerente {
         String senha = JOptionPane.showInputDialog("SENHA");
         if (senha == null) {JOptionPane.showMessageDialog(null, nulo); return;}
         
-        Gerente geren = new Gerente(nome, login, senha);
+        String tipo = (String) JOptionPane.showInputDialog(
+                null,
+                "Tipo:",
+                "Escolha um tipo",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                tipos,
+                tipos[1]);
+        if (tipo == null) {JOptionPane.showMessageDialog(null, nulo); return;}
+        
+        Usuarios usu = new Usuarios(nome, login, senha, UsuTipo.valueOf(tipo));
         try {
-            geren = contgeren.inserir(geren);
+            usu = contusu.inserir(usu);
         } catch (SQLIntegrityConstraintViolationException e) {
             JOptionPane.showMessageDialog(null, "Login já utilizado, " +
                     "por favor escolha outro");
             return;
         }
-        JOptionPane.showMessageDialog(null,geren.toString());
+        JOptionPane.showMessageDialog(null, usu.toString());
     }
     
     public static void buscar() throws SQLException, ClassNotFoundException {
@@ -121,8 +133,10 @@ public class ManterGerente {
         int id;
         String nome;
         String login;
-        ControllerGerente contgeren = new ControllerGerente();
-        List<Gerente> geren;
+        String tipo;
+        String[] tipos = {"ADMINISTRADOR", "GERENTE"};
+        ControllerUsuarios contusu = new ControllerUsuarios();
+        List<Usuarios> usus;
         String lista = "";
         
         while (true) {
@@ -132,7 +146,8 @@ public class ManterGerente {
                           1 - Id 
                           2 - Nome 
                           3 - Login
-                          4 - Voltar
+                          4 - Tipo
+                          5 - Voltar
                          """;
             String result = JOptionPane.showInputDialog(msg);
 
@@ -152,38 +167,57 @@ public class ManterGerente {
                         JOptionPane.showMessageDialog(null,"Por favor, digite um ID");
                         return;
                     }
-                    Gerente gerenId = contgeren.buscarId(id);
-                    if (gerenId == null) {
-                        lista = "Gerente não encontrado.";
+                    Usuarios usuId = contusu.buscarId(id);
+                    if (usuId == null) {
+                        lista = "Usuario não encontrado.";
                     } else {
-                        lista = gerenId.toString();
+                        lista = usuId.toString();
                     }
                 }
                 case 2 -> {
                     nome = JOptionPane.showInputDialog("NOME");
                     if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    geren = contgeren.buscarNome(nome);
-                    if (geren.isEmpty()) {
-                        lista = "Gerente não encontrado.";
+                    usus = contusu.buscarNome(nome);
+                    if (usus.isEmpty()) {
+                        lista = "Usuario não encontrado.";
                     } else {
-                        for (Gerente gerenSaida : geren) {
-                            lista = lista + "\n" + gerenSaida.toString();
+                        for (Usuarios usuSaida : usus) {
+                            lista = lista + "\n" + usuSaida.toString();
                         }
                     }
                 }
                 case 3 -> {
                     login = JOptionPane.showInputDialog("LOGIN");
                     if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
-                    geren = contgeren.buscarLogin(login);
-                    if (geren.isEmpty()) {
-                        lista = "Gerente não encontrado.";
+                    usus = contusu.buscarLogin(login);
+                    if (usus.isEmpty()) {
+                        lista = "Usuario não encontrado.";
                     } else {
-                        for (Gerente gerenSaida : geren) {
-                            lista = lista + gerenSaida.toString() + '\n';
+                        for (Usuarios usuSaida : usus) {
+                            lista = lista + usuSaida.toString() + '\n';
                         }
                     }
                 }
-                case 4 -> stop = true;
+                case 4 -> {
+                    tipo = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Tipo:",
+                        "Escolha um tipo",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        tipos,
+                        tipos[1]);
+                    if (tipo == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    usus = contusu.buscarTipo(UsuTipo.valueOf(tipo));
+                    if (usus.isEmpty()) {
+                        lista = "Usuario não encontrado.";
+                    } else {
+                        for (Usuarios usuSaida : usus) {
+                            lista = lista + usuSaida.toString() + '\n';
+                        }
+                    }
+                }
+                case 5 -> stop = true;
                 default -> {
                     JOptionPane.showMessageDialog(null,"Digite um valor válido"); 
                     continue;}
@@ -203,8 +237,10 @@ public class ManterGerente {
         String nome;
         String login;
         String senha ;
+        String tipo;
+        String[] tipos = {"ADMINISTRADOR", "GERENTE"};
         String nulo = "Por favor, digite todos os dados";
-        ControllerGerente contgeren = new ControllerGerente();
+        ControllerUsuarios contusu = new ControllerUsuarios();
         
         try {
             id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
@@ -213,11 +249,11 @@ public class ManterGerente {
             return;
         }
         
-        Gerente gerenId = contgeren.buscarId(id);
-        if (gerenId == null) {
-            JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
+        Usuarios usuId = contusu.buscarId(id);
+        if (usuId == null) {
+            JOptionPane.showMessageDialog(null,"Usuario não encontrado.");
             return;
-        } else JOptionPane.showMessageDialog(null,gerenId.toString());
+        } else JOptionPane.showMessageDialog(null,usuId.toString());
 
                 
         int opc;
@@ -228,8 +264,9 @@ public class ManterGerente {
                           1 - Nome 
                           2 - Login 
                           3 - Senha
-                          4 - Tudo
-                          5 - Voltar
+                          4 - Tipo
+                          5 - Tudo
+                          6 - Voltar
                          """;
             String result = JOptionPane.showInputDialog(msg);
 
@@ -245,48 +282,70 @@ public class ManterGerente {
                     nome = JOptionPane.showInputDialog("NOME");
                     if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     
-                    contgeren.alterarNome(id, nome);
+                    contusu.alterarNome(id, nome);
                 }
                 case 2 -> {
                     login = JOptionPane.showInputDialog("LOGIN");
                     if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     
-                    contgeren.alterarLogin(id, login);
+                    contusu.alterarLogin(id, login);
                 }
                 case 3 -> {
                     senha = JOptionPane.showInputDialog("SENHA");
                     if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     
-                    contgeren.alterarSenha(id, senha);
+                    contusu.alterarSenha(id, senha);
                 }
                 case 4 -> {
+                    tipo = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Tipo:",
+                        "Escolha um tipo",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        tipos,
+                        tipos[1]);
+                    if (tipo == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    
+                    contusu.alterarTipo(id, UsuTipo.valueOf(tipo));
+                }
+                case 5 -> {
                     nome = JOptionPane.showInputDialog("NOME");
                     if (nome == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     login = JOptionPane.showInputDialog("LOGIN");
                     if (login == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     senha = JOptionPane.showInputDialog("SENHA");
                     if (senha == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
+                    tipo = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Tipo:",
+                        "Escolha um tipo",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        tipos,
+                        tipos[1]);                    
+                    if (tipo == null) {JOptionPane.showMessageDialog(null, nulo); continue;}
                     
-                    contgeren.alterarTudo(id, nome, login, senha);
+                    contusu.alterarTudo(id, nome, login, senha, UsuTipo.valueOf(tipo));
                 }
-                case 5 -> stop = true;
+                case 6 -> stop = true;
             }
             
             if (stop) {
                 break;
             }        
             
-            gerenId = contgeren.buscarId(id);
-            JOptionPane.showMessageDialog(null,gerenId.toString());
+            usuId = contusu.buscarId(id);
+            JOptionPane.showMessageDialog(null,usuId.toString());
         }
     }
     
     public static void listar() throws SQLException, ClassNotFoundException {
         String lista = "";
-        ControllerGerente contgeren = new ControllerGerente();
-        List<Gerente> listaGeren = contgeren.listar();
-        for (Gerente gerenSaida : listaGeren) {
-            lista = lista + gerenSaida.toString() + '\n';
+        ControllerUsuarios contusu = new ControllerUsuarios();
+        List<Usuarios> listaUsu = contusu.listar();
+        for (Usuarios usuSaida : listaUsu) {
+            lista = lista + usuSaida.toString() + '\n';
         }
         JOptionPane.showMessageDialog(null,lista);
     }
@@ -300,48 +359,48 @@ public class ManterGerente {
             return;
         }
         
-        ControllerGerente contgeren = new ControllerGerente();
-        Gerente gerenId = contgeren.buscarId(id);
-        if (gerenId == null) {
-            JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
+        ControllerUsuarios contusu = new ControllerUsuarios();
+        Usuarios usuId = contusu.buscarId(id);
+        if (usuId == null) {
+            JOptionPane.showMessageDialog(null,"Usuario não encontrado.");
             return;
-        } else JOptionPane.showMessageDialog(null,gerenId.toString());
+        } else JOptionPane.showMessageDialog(null,usuId.toString());
         
         Boolean result = false;
         try {
-            contgeren.excluir(id);
+            contusu.excluir(id);
         } catch (SQLIntegrityConstraintViolationException e) {
             int alt = JOptionPane.showConfirmDialog(null,"Não é possível excluir" +
-                    " este gerente, pois este ainda gerencia contas,\n" +
+                    " este usuario, pois este ainda gerencia contas,\n" +
                     " deseja alterar o gerente responsável por estas contas?");
-            if (alt == JOptionPane.YES_OPTION) result = AlterarGerente(id);
+            if (alt == JOptionPane.YES_OPTION) result = AlterarUsuario(id);
             if (result) {
-                contgeren.excluir(id);
+                contusu.excluir(id);
             } else {
                 return;
             }
         }
-        JOptionPane.showMessageDialog(null, "Gerente Exluído.");
+        JOptionPane.showMessageDialog(null, "Usuario Exluído.");
     }
     
-    public static Boolean AlterarGerente(int idAntigo) throws SQLException, ClassNotFoundException {
+    public static Boolean AlterarUsuario(int idAntigo) throws SQLException, ClassNotFoundException {
         int idNovo;
         try {
-            idNovo = Integer.parseInt(JOptionPane.showInputDialog("Id do novo Gerente"));
+            idNovo = Integer.parseInt(JOptionPane.showInputDialog("Id do novo Usuario, responsável"));
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null,"Por favor, digite um ID");
             return false;
         }
         
-        ControllerGerente contgeren = new ControllerGerente();
-        Gerente gerenId = contgeren.buscarId(idNovo);
+        ControllerUsuarios contgeren = new ControllerUsuarios();
+        Usuarios gerenId = contgeren.buscarId(idNovo);
         if (gerenId == null) {
-            JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
+            JOptionPane.showMessageDialog(null,"Usuario não encontrado.");
             return false;
         } else JOptionPane.showMessageDialog(null,gerenId.toString());
         
-        ControllerConta contconta = new ControllerConta();
-        contconta.alterarGerente(idNovo, idAntigo);
+        ControllerContas contconta = new ControllerContas();
+        contconta.alterarUsuario(idNovo, idAntigo);
         // Corrigir Buscar e adicionar aqui correntamente
         contconta.listar();
         return true;

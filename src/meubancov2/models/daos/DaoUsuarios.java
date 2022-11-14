@@ -1,6 +1,6 @@
 package meubancov2.models.daos;
 
-import meubancov2.models.beans.Gerente;
+import meubancov2.models.beans.Usuarios;
 import meubancov2.utils.Conexao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,62 +9,65 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import meubancov2.models.beans.UsuTipo;
 
 /**
  *
  * @author scar
  */
-public class DaoGerente {
+public class DaoUsuarios {
     private final Connection con;
 
-    public DaoGerente() throws SQLException, ClassNotFoundException {
+    public DaoUsuarios() throws SQLException, ClassNotFoundException {
         this.con = new Conexao().getConnection();
     }
     
-    public Gerente validar(String login, String senha) throws SQLException {
-        String sql = "select * from Gerente WHERE login = ? AND senha = ?";
-        Gerente gerenSaida;
+    public Usuarios validar(String login, String senha) throws SQLException {
+        String sql = "select * from Usuarios WHERE login = ? AND senha = ?";
+        Usuarios usuSaida;
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             stmt.setString(1, login);
             stmt.setString(2, senha);
             ResultSet rs = stmt.executeQuery();
-            gerenSaida = null;
+            usuSaida = null;
             while (rs.next()) {
-                gerenSaida = new Gerente(
+                usuSaida = new Usuarios(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getString(4));
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5)));
             }
         }
-        return gerenSaida; 
+        return usuSaida; 
     }
     
-    public Gerente inserir(Gerente geren) throws SQLException{
-        String sql = "insert into Gerente" + " values (default,?,?, ?)";
+    public Usuarios inserir(Usuarios usu) throws SQLException{
+        String sql = "insert into Usuarios values (default, ?, ?, ?, ?)";
     
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt =
                         con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
             // seta os valores
-            stmt.setString(1, geren.getNome());
-            stmt.setString(2, geren.getLogin());
-            stmt.setString(3, geren.getSenha());
+            stmt.setString(1, usu.getNome());
+            stmt.setString(2, usu.getLogin());
+            stmt.setString(3, usu.getSenha());
+            stmt.setString(4, usu.getTipo().toString());
             
             // executa
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                geren.setId(rs.getInt(1));
+                usu.setId(rs.getInt(1));
             }
         }
-        return geren;
+        return usu;
     }
     
-    public Gerente buscarId(int id) throws SQLException{
-        String sql = "SELECT * FROM Gerente WHERE id = ?";
-        Gerente geren = null;
+    public Usuarios buscarId(int id) throws SQLException{
+        String sql = "SELECT * FROM Usuarios WHERE id = ?";
+        Usuarios usu = null;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -72,21 +75,22 @@ public class DaoGerente {
             // executa
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                // criando o objeto Usuario
-                geren = new Gerente(
+                // criando o objeto Usuarios
+                usu = new Usuarios(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getString(4));
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
             }
         }
-        return geren;
+        return usu;
     }
     
-    public List<Gerente> buscarNome(String nome) throws SQLException{
-        String sql = "SELECT * FROM Gerente WHERE nome like ?";
-        List<Gerente> gerens = new ArrayList();
+    public List<Usuarios> buscarNome(String nome) throws SQLException{
+        String sql = "SELECT * FROM Usuarios WHERE nome like ?";
+        List<Usuarios> usus = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -94,22 +98,23 @@ public class DaoGerente {
             // executa
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                // criando o objeto Usuario
-                Gerente geren = new Gerente(
+                // criando o objeto Usuarios
+                Usuarios usu = new Usuarios(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getString(4));
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
-                gerens.add(geren);
+                usus.add(usu);
             }
         }
-        return gerens;
+        return usus;
     }
     
-    public List<Gerente> buscarLogin(String login) throws SQLException{
-        String sql = "SELECT * FROM Gerente WHERE login like ?";
-        List<Gerente> gerens = new ArrayList();
+    public List<Usuarios> buscarLogin(String login) throws SQLException{
+        String sql = "SELECT * FROM Usuarios WHERE login like ?";
+        List<Usuarios> usus = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -117,29 +122,55 @@ public class DaoGerente {
             // executa
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                // criando o objeto Usuario
-                Gerente geren = new Gerente(
+                // criando o objeto Usuarios
+                Usuarios usu = new Usuarios(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getString(4));
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
-                gerens.add(geren);
+                usus.add(usu);
             }
         }
-        return gerens;
+        return usus;
     }
     
-    public void alterarTudo(int id, String nome, String login, String senha) throws SQLException{
+    public List<Usuarios> buscarTipo(UsuTipo tipo) throws SQLException{
+        String sql = "SELECT * FROM Usuarios WHERE tipo like ?";
+        List<Usuarios> usus = new ArrayList();
+        // seta os valores
+        try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, tipo + "%");
+            // executa
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                // criando o objeto Usuarios
+                Usuarios usu = new Usuarios(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5)));
+                // adiciona o usu à lista de usus
+                usus.add(usu);
+            }
+        }
+        return usus;
+    }
+    
+    public void alterarTudo(int id, String nome, String login, String senha, UsuTipo tipo) throws SQLException{
         String sql;
-        sql = "UPDATE Gerente SET nome = ?, login = ?, senha = ? WHERE id = ?";
+        sql = "UPDATE Usuarios SET nome = ?, login = ?, senha = ?, tipo = ? WHERE id = ?";
         try ( // prepared statement para inserção
             PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
             stmt.setString(1, nome);
             stmt.setString(2, login);
             stmt.setString(3, senha);
-            stmt.setInt(4, id);
+            stmt.setString(4, tipo.toString());
+            stmt.setInt(5, id);
 
             // executa
             stmt.execute();
@@ -148,7 +179,7 @@ public class DaoGerente {
     
     public void alterarNome(int id, String nome) throws SQLException{
         String sql;
-        sql = "UPDATE Gerente SET nome = ? WHERE id = ?";
+        sql = "UPDATE Usuarios SET nome = ? WHERE id = ?";
         try ( // prepared statement para inserção
             PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
@@ -162,7 +193,7 @@ public class DaoGerente {
     
     public void alterarLogin(int id, String login) throws SQLException{
         String sql;
-        sql = "UPDATE Gerente SET login = ? WHERE id = ?";
+        sql = "UPDATE Usuarios SET login = ? WHERE id = ?";
         try ( // prepared statement para inserção
             PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
@@ -176,7 +207,7 @@ public class DaoGerente {
     
     public void alterarSenha(int id, String senha) throws SQLException{
         String sql;
-        sql = "UPDATE Gerente SET senha = ? WHERE id = ?";
+        sql = "UPDATE Usuarios SET senha = ? WHERE id = ?";
         try ( // prepared statement para inserção
             PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
@@ -188,8 +219,22 @@ public class DaoGerente {
         }
     }
     
+    public void alterarTipo(int id, UsuTipo tipo) throws SQLException{
+        String sql;
+        sql = "UPDATE Usuarios SET tipo = ? WHERE id = ?";
+        try ( // prepared statement para inserção
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            // seta os valores
+            stmt.setString(1, tipo.toString());
+            stmt.setInt(2, id);
+
+            // executa
+            stmt.execute();
+        }
+    }
+    
     public void excluir(int id) throws SQLException{
-        String sql = "DELETE FROM Gerente WHERE id = ?";
+        String sql = "DELETE FROM Usuarios WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -200,28 +245,29 @@ public class DaoGerente {
         }
     }
     
-    public List<Gerente> listar() throws SQLException{
+    public List<Usuarios> listar() throws SQLException{
         // usus: array armazena a lista de registros
 
-        List<Gerente> gerens = new ArrayList<>();
+        List<Usuarios> usus = new ArrayList<>();
         
-        String sql = "SELECT * FROM Gerente";
+        String sql = "SELECT * FROM Usuarios";
         try (PreparedStatement stmt = this.con.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
-                // criando o objeto Usuario
-                Gerente geren = new Gerente(
+                // criando o objeto Usuarios
+                Usuarios usu = new Usuarios(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getString(4)
+                        rs.getString(4),
+                        UsuTipo.valueOf(rs.getString(5))
                 );
                 // adiciona o usu à lista de usus
-                gerens.add(geren);
+                usus.add(usu);
             }
             
         }
-        return gerens;
+        return usus;
    }
 }

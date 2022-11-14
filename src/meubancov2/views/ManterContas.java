@@ -4,25 +4,24 @@ import java.awt.HeadlessException;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
-import meubancov2.controllers.ControllerConta;
-import meubancov2.controllers.ControllerCliente;
-import meubancov2.controllers.ControllerGerente;
-import meubancov2.models.beans.Conta;
-import meubancov2.models.beans.Cliente;
-import meubancov2.models.beans.Gerente;
-import meubancov2.models.beans.Tipo;
-
+import meubancov2.controllers.ControllerContas;
+import meubancov2.controllers.ControllerClientes;
+import meubancov2.controllers.ControllerUsuarios;
+import meubancov2.models.beans.Contas;
+import meubancov2.models.beans.Clientes;
+import meubancov2.models.beans.Usuarios;
+import meubancov2.models.beans.ContaTipo;
 /**
  *
  * @author scar
  */
-public class ManterConta {
+public class ManterContas {
 
     public static void menu() throws SQLException, ClassNotFoundException {
         int opc = 7;
         while (opc != 0) {
             String msg = """
-                         Conta:
+                         Contas:
                           1 - Inserir
                           2 - Alterar
                           3 - Buscar
@@ -54,58 +53,47 @@ public class ManterConta {
     }
     
     public static void inserir() throws SQLException, ClassNotFoundException {
-        int idGerente;
+        int idUsuario;
         int idCliente;
         float valor;
-        int tipo;
-        Tipo tipoConta;
-        ControllerConta contconta = new ControllerConta();
-        ControllerCliente contclien = new ControllerCliente();
-        ControllerGerente contgeren = new ControllerGerente();
+        String tipoContas;
+        String[] tipos = {"POUPANÇA", "CORRENTE"};
+        ControllerContas contconta = new ControllerContas();
+        ControllerClientes contclien = new ControllerClientes();
+        ControllerUsuarios contgeren = new ControllerUsuarios();
         
         try {
             idCliente = Integer.parseInt(JOptionPane.showInputDialog("ID DO CLIENTE"));
-            Cliente clienId = contclien.buscarId(idCliente);
+            Clientes clienId = contclien.buscarId(idCliente);
             if (clienId == null) {
                 JOptionPane.showMessageDialog(null,"Cliente não encontrado.");
                 return;
             } else JOptionPane.showMessageDialog(null,clienId.toString());
             
-            idGerente = Integer.parseInt(JOptionPane.showInputDialog("ID DO GERENTE"));
-            Gerente gerenId = contgeren.buscarId(idGerente);
+            idUsuario = Integer.parseInt(JOptionPane.showInputDialog("ID DO USUARIO"));
+            Usuarios gerenId = contgeren.buscarId(idUsuario);
             if (gerenId == null) {
-                JOptionPane.showMessageDialog(null,"Gerente não encontrado.");
+                JOptionPane.showMessageDialog(null,"Usuario não encontrado.");
                 return;
             } else JOptionPane.showMessageDialog(null,gerenId.toString());
 
             valor = Float.parseFloat(JOptionPane.showInputDialog("VALOR"));
 
-            tipo = Integer.parseInt(JOptionPane.showInputDialog("""
-                TIPO:
-                 1- Corrente
-                 2- Poupança"""));
+            tipoContas = (String) JOptionPane.showInputDialog(
+                            null,
+                            "Tipo:",
+                            "Escolha um tipo",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            tipos,
+                            tipos[1]);
             
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Por favor, digite os valores corretos!");
             return;
         }
         
-        switch (tipo) {
-            case 1 -> {
-                tipoConta = Tipo.CORRENTE;
-            }
-            
-            case 2 -> {
-                tipoConta = Tipo.POUPANÇA;
-            }
-            
-            default -> {
-                JOptionPane.showMessageDialog(null, "Digite uma opção válida");
-                return;
-            }
-        }
-        
-        Conta conta = new Conta(idGerente, idCliente, valor, tipoConta);
+        Contas conta = new Contas(idUsuario, idCliente, valor, ContaTipo.valueOf(tipoContas));
         conta = contconta.inserir(conta);
         JOptionPane.showMessageDialog(null, conta.toString());
     }
@@ -116,7 +104,7 @@ public class ManterConta {
             String msg = """
                          O que você deseja pesquisa?:
                           1 - Id do Cliente
-                          2 - Id do Gerente 
+                          2 - Id do Usuario 
                           3 - Id da Conta
                           4 - Tipo
                           5 - Voltar
@@ -142,7 +130,7 @@ public class ManterConta {
     
     public static void alterar() throws SQLException, ClassNotFoundException {
         int id;
-        ControllerConta contconta = new ControllerConta();
+        ControllerContas contconta = new ControllerContas();
         
         try {
             id = Integer.parseInt(JOptionPane.showInputDialog("ID"));
@@ -151,7 +139,7 @@ public class ManterConta {
             return;
         }
         
-        Conta contaId = contconta.buscarId(id);
+        Contas contaId = contconta.buscarId(id);
         if (contaId == null) {
             JOptionPane.showMessageDialog(null,"Conta não encontrado.");
             return;
@@ -161,8 +149,8 @@ public class ManterConta {
             int opc;
             String msg = """
                          O que você deseja alterar?:
-                          1 - Id do Gerente 
-                          2 - Id do Cliente
+                          1 - Id do Cliente 
+                          2 - Id do Usuario
                           3 - Valor
                           4 - Tipo
                           5 - Tudo
@@ -177,24 +165,21 @@ public class ManterConta {
                 continue;
             }
 
-            String lista = AlterarOpc(opc, id);
-            
-            if (lista.equals("")) {
+            if (AlterarOpc(opc, id)) {
                 break;
-            }     
+            }
             
-            JOptionPane.showMessageDialog(null, lista);
+            contaId = contconta.buscarId(id);
+            JOptionPane.showMessageDialog(null, contaId);
         }
         
-        contaId = contconta.buscarId(id);
-        JOptionPane.showMessageDialog(null, contaId);
     }
     
     public static void listar() throws SQLException, ClassNotFoundException {
         String lista = "";
-        ControllerConta contconta = new ControllerConta();
-        List<Conta> listaConta = contconta.listar();
-        for (Conta contaSaida : listaConta) {
+        ControllerContas contconta = new ControllerContas();
+        List<Contas> listaConta = contconta.listar();
+        for (Contas contaSaida : listaConta) {
             lista = lista + contaSaida.toString() + '\n';
         }
         JOptionPane.showMessageDialog(null,lista);
@@ -209,8 +194,8 @@ public class ManterConta {
             return;
         }
         
-        ControllerConta contconta = new ControllerConta();
-        Conta contaId = contconta.buscarId(id);
+        ControllerContas contconta = new ControllerContas();
+        Contas contaId = contconta.buscarId(id);
         if (contaId == null) {
             JOptionPane.showMessageDialog(null,"Conta não encontrado.");
             return;
@@ -221,13 +206,14 @@ public class ManterConta {
     
     public static String BuscarOpc(int opc) throws SQLException, ClassNotFoundException {
         int idCliente;
-        int idGerente;
+        int idUsuario;
         int id;
-        Tipo tipoConta;
+        String tipoContas;
+        String[] tipos = {"POUPANÇA", "CORRENTE"};
         
         String lista = "";
-        List<Conta> conta;
-        ControllerConta contconta = new ControllerConta();
+        List<Contas> conta;
+        ControllerContas contconta = new ControllerContas();
         
         switch (opc) {
             case 1 -> {
@@ -238,27 +224,31 @@ public class ManterConta {
                     return lista;
                 }
 
-                Conta contaId = contconta.buscarIdCliente(idCliente);
-                if (contaId == null) {
+                conta = contconta.buscarIdCliente(idCliente);
+                if (conta.isEmpty()) {
                     lista = "Conta não encontrado.";
                 } else {
-                    lista = contaId.toString();
+                    for (Contas contaSaida : conta) {
+                        lista = lista + "\n" + contaSaida.toString();
+                    }
                 }
                 break;
             }
             case 2 -> {
                 try {
-                    idGerente = Integer.parseInt(JOptionPane.showInputDialog("Id do Gerente"));
+                    idUsuario = Integer.parseInt(JOptionPane.showInputDialog("Id do Usuario"));
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um Id válido");
                     return lista;
                 }
 
-                Conta contaId = contconta.buscarIdCliente(idGerente);
-                if (contaId == null) {
+                conta = contconta.buscarIdUsuario(idUsuario);
+                if (conta.isEmpty()) {
                     lista = "Conta não encontrado.";
                 } else {
-                    lista = contaId.toString();
+                    for (Contas contaSaida : conta) {
+                        lista = lista + "\n" + contaSaida.toString();
+                    }
                 }
                 break;
             }
@@ -270,7 +260,7 @@ public class ManterConta {
                     return lista;
                 }
 
-                Conta contaId = contconta.buscarId(id);
+                Contas contaId = contconta.buscarId(id);
                 if (contaId == null) {
                     lista = "Conta não encontrado.";
                 } else {
@@ -279,32 +269,25 @@ public class ManterConta {
             }
             case 4 -> {
                 try {
-                    int tipo = Integer.parseInt(JOptionPane.showInputDialog("TIPO:" +
-                        "1- Corrente" +
-                        "2- Poupança"));
-                    switch (tipo) {
-                        case 1 -> {
-                            tipoConta = Tipo.CORRENTE;
-                        }
-                        case 2 -> {
-                            tipoConta = Tipo.POUPANÇA;
-                        }
-                        default -> {
-                            JOptionPane.showMessageDialog(null, "Digite um tipo válido");
-                            return lista;
-                        }
-                    }
+                    tipoContas = (String) JOptionPane.showInputDialog(
+                            null,
+                            "Tipo:",
+                            "Escolha um tipo",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            tipos,
+                            tipos[1]);
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um tipo válido");
                     return lista;
                 }
 
-                conta = contconta.buscarTipo(tipoConta);
+                conta = contconta.buscarTipo(ContaTipo.valueOf(tipoContas));
 
                 if (conta.isEmpty()) {
                     lista = "Conta não encontrado.";
                 } else {
-                    for (Conta contaSaida : conta) {
+                    for (Contas contaSaida : conta) {
                         lista = lista + "\n" + contaSaida.toString();
                     }
                 }
@@ -319,109 +302,104 @@ public class ManterConta {
         return lista;
     }
     
-    public static String AlterarOpc(int opc, int id) throws SQLException, ClassNotFoundException {
+    public static Boolean AlterarOpc(int opc, int id) throws SQLException, ClassNotFoundException {
         int idCliente;
-        int idGerente;
+        int idUsuario;
         Float valor;
-        Tipo tipoConta;
-        
-        String lista = "";
-        ControllerConta contconta = new ControllerConta();
+        String tipoContas;
+        String[] tipos = {"POUPANÇA", "CORRENTE"};
+        ControllerContas contconta = new ControllerContas();
+        ControllerUsuarios contusu = new ControllerUsuarios();
+        ControllerClientes contclien = new ControllerClientes();
         
         switch (opc) {
             case 1 -> {
                 try {
                     idCliente = Integer.parseInt(JOptionPane.showInputDialog("Id do Cliente"));
+
+                    Clientes clienId = contclien.buscarId(id);
+                    if (clienId == null) {
+                        JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+                        break;
+                    } else JOptionPane.showMessageDialog(null, clienId.toString());
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um Id válido");
-                    return lista;
+                    break;
                 }
                 
                 contconta.alterarIdClien(id, idCliente);
-                break;
             }
             case 2 -> {
                 try {
-                    idGerente = Integer.parseInt(JOptionPane.showInputDialog("Id do Cliente"));
+                    idUsuario = Integer.parseInt(JOptionPane.showInputDialog("Id do Usuario"));
+                    
+                    Usuarios usuId = contusu.buscarId(id);
+                    if (usuId == null) {
+                        JOptionPane.showMessageDialog(null,"Usuario não encontrado.");
+                        break;
+                    } else JOptionPane.showMessageDialog(null,usuId.toString());
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um Id válido");
-                    return lista;
+                    break;
                 }
                 
-                contconta.alterarIdGeren(id, idGerente);
-                break;
+                contconta.alterarIdUsu(id, idUsuario);
             }
             case 3 -> {
-                try {
-                    int tipo = Integer.parseInt(JOptionPane.showInputDialog("TIPO:" +
-                        "1- Corrente" +
-                        "2- Poupança"));
-                    switch (tipo) {
-                        case 1 -> {
-                            tipoConta = Tipo.CORRENTE;
-                        }
-                        case 2 -> {
-                            tipoConta = Tipo.POUPANÇA;
-                        }
-                        default -> {
-                            JOptionPane.showMessageDialog(null, "Digite um tipo válido");
-                            return lista;
-                        }
-                    }
-                } catch (HeadlessException | NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Digite um tipo válido");
-                    return lista;
-                }
-                
-                contconta.alterarTipo(id, tipoConta);
-                break;
-            }
-            case 4 -> {
                 try {
                     valor = Float.parseFloat(JOptionPane.showInputDialog("Valor"));
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um valor válido");
-                    return lista;
+                    break;
                 }
                 
                 contconta.alterarValor(id, valor);
-                break;
+            }
+            case 4 -> {
+                try {
+                    tipoContas = (String) JOptionPane.showInputDialog(
+                            null,
+                            "Tipo:",
+                            "Escolha um tipo",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            tipos,
+                            tipos[1]);
+                } catch (HeadlessException | NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Digite um tipo válido");
+                    break;
+                }
+                
+                contconta.alterarTipo(id, ContaTipo.valueOf(tipoContas));
             }
             case 5 -> {
                 try {
                     idCliente = Integer.parseInt(JOptionPane.showInputDialog("Id do Cliente"));
-                    idGerente = Integer.parseInt(JOptionPane.showInputDialog("Id do Cliente"));
+                    idUsuario = Integer.parseInt(JOptionPane.showInputDialog("Id do Usuario"));
                     valor = Float.parseFloat(JOptionPane.showInputDialog("Valor"));
-                    int tipo = Integer.parseInt(JOptionPane.showInputDialog("TIPO:" +
-                        "1- Corrente" +
-                        "2- Poupança"));
-                    switch (tipo) {
-                        case 1 -> {
-                            tipoConta = Tipo.CORRENTE;
-                        }
-                        case 2 -> {
-                            tipoConta = Tipo.POUPANÇA;
-                        }
-                        default -> {
-                            JOptionPane.showMessageDialog(null, "Digite um tipo válido");
-                            return lista;
-                        }
-                    }
+                    tipoContas = (String) JOptionPane.showInputDialog(
+                            null,
+                            "Tipo:",
+                            "Escolha um tipo",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            tipos,
+                            tipos[1]);
                 } catch (HeadlessException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Digite um Id válido");
-                    return lista;
+                    break;
                 }
                 
-                contconta.alterarTudo(id, idCliente, idGerente, valor, tipoConta);
-                break;
+                contconta.alterarTudo(id, idCliente, idUsuario,
+                        valor, ContaTipo.valueOf(tipoContas));
             }
-            case 6 -> {return lista;}
+            case 6 -> {return true;}
             default -> {
                 JOptionPane.showMessageDialog(null,"Digite um valor válido"); 
 
             }
         }
-        return lista;
+        return false;
     }
 
 }

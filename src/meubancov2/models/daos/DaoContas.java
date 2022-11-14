@@ -7,23 +7,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import meubancov2.models.beans.Conta;
-import meubancov2.models.beans.Tipo;
+import meubancov2.models.beans.Contas;
+import meubancov2.models.beans.ContaTipo;
 import meubancov2.utils.Conexao;
 
 /**
  *
  * @author scar
  */
-public class DaoConta {
+public class DaoContas {
     private final Connection con;
 
-    public DaoConta() throws SQLException, ClassNotFoundException {
+    public DaoContas() throws SQLException, ClassNotFoundException {
         this.con = new Conexao().getConnection();
     }
     
-    public Conta inserir(Conta conta) throws SQLException{
-        String sql = "insert into Conta" + " values (default, ?, ?, ?, ?)";
+    public Contas inserir(Contas conta) throws SQLException{
+        String sql = "insert into Contas" + " values (default, ?, ?, ?, ?)";
     
         try (PreparedStatement stmt =
                         con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
@@ -43,14 +43,14 @@ public class DaoConta {
         return conta;
     }
     
-    public void alterarTudo(int id, int idCliente, int idGerente, Float valor, Tipo tipo) throws SQLException{
-        String sql = "UPDATE Conta SET idCliente = ?, idGerente = ?, valor = ?, tipo = ? WHERE id = ?";
+    public void alterarTudo(int id, int idCliente, int idUsuario, Float valor, ContaTipo tipo) throws SQLException{
+        String sql = "UPDATE Contas SET idCliente = ?, idUsuario = ?, valor = ?, tipo = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
             stmt.setInt(1, idCliente);
-            stmt.setInt(2, idGerente);
+            stmt.setInt(2, idUsuario);
             stmt.setFloat(3, valor);
             stmt.setString(4, tipo.toString());
             stmt.setInt(5, id);
@@ -61,7 +61,7 @@ public class DaoConta {
     }
     
     public void alterarIdClien(int id, int idCliente) throws SQLException{
-        String sql = "UPDATE Conta SET idCliente = ? WHERE id = ?";
+        String sql = "UPDATE Contas SET idCliente = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -74,13 +74,13 @@ public class DaoConta {
         }
     }
     
-    public void alterarIdGeren(int id, int idGerente) throws SQLException{
-        String sql = "UPDATE Conta SET idGerente = ? WHERE id = ?";
+    public void alterarIdUsu(int id, int idUsuario) throws SQLException{
+        String sql = "UPDATE Contas SET idUsuario = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
             // seta os valores
-            stmt.setInt(1, idGerente);
+            stmt.setInt(1, idUsuario);
             stmt.setInt(2, id);
             
             // executa
@@ -89,7 +89,7 @@ public class DaoConta {
     }
     
     public void alterarValor(int id, Float valor) throws SQLException{
-        String sql = "UPDATE Conta SET valor = ? WHERE id = ?";
+        String sql = "UPDATE Contas SET valor = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -102,8 +102,8 @@ public class DaoConta {
         }
     }
     
-    public void alterarTipo(int id, Tipo tipo) throws SQLException{
-        String sql = "UPDATE Conta SET tipo = ? WHERE id = ?";
+    public void alterarTipo(int id, ContaTipo tipo) throws SQLException{
+        String sql = "UPDATE Contas SET tipo = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -117,7 +117,7 @@ public class DaoConta {
     }
     
     public void excluir(int id) throws SQLException{
-        String sql = "DELETE FROM Conta WHERE id = ?";
+        String sql = "DELETE FROM Contas WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -129,7 +129,7 @@ public class DaoConta {
     }
     
     public void excluirContas(int idCliente) throws SQLException {
-        String sql = "DELETE FROM Conta WHERE idCliente = ?";
+        String sql = "DELETE FROM Contas WHERE idCliente = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -140,9 +140,9 @@ public class DaoConta {
         }
     }
     
-    public Conta buscarId(int id) throws SQLException{
-        String sql = "SELECT * FROM Conta WHERE id like ?";
-        Conta contaSaida;
+    public Contas buscarId(int id) throws SQLException{
+        String sql = "SELECT * FROM Contas WHERE id like ?";
+        Contas contaSaida;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -152,69 +152,69 @@ public class DaoConta {
             contaSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                contaSaida = new Conta(
+                contaSaida = new Contas(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getFloat(4),
-                        Tipo.valueOf(rs.getString(5)));
+                        ContaTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
             }
         }
         return contaSaida;
     }
     
-    public Conta buscarIdCliente(int idCliente) throws SQLException{
-        String sql = "SELECT * FROM Conta WHERE idCliente like ?";
-        Conta contaSaida;
+    public List<Contas> buscarIdCliente(int idCliente) throws SQLException{
+        String sql = "SELECT * FROM Contas WHERE idCliente like ?";
+        List<Contas> contas = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
             stmt.setInt(1, idCliente);
             // executa
             ResultSet rs = stmt.executeQuery();
-            contaSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                contaSaida = new Conta(
+                Contas conta = new Contas(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getFloat(4),
-                        Tipo.valueOf(rs.getString(5)));
+                        ContaTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
+                contas.add(conta);
             }
         }
-        return contaSaida;
+        return contas;
     }
     
-    public Conta buscarIdGerente(int idGerente) throws SQLException{
-        String sql = "SELECT * FROM Conta WHERE idGerente like ?";
-        Conta contaSaida;
+    public List<Contas> buscarIdUsuario(int idUsuario) throws SQLException{
+        String sql = "SELECT * FROM Contas WHERE idUsuario like ?";
+        List<Contas> contas = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
-            stmt.setInt(1, idGerente);
+            stmt.setInt(1, idUsuario);
             // executa
             ResultSet rs = stmt.executeQuery();
-            contaSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                contaSaida = new Conta(
+                Contas conta = new Contas(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getFloat(4),
-                        Tipo.valueOf(rs.getString(5)));
+                        ContaTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
+                contas.add(conta);
             }
         }
-        return contaSaida;
+        return contas;
     }
    
-    public List<Conta> buscarTipo(Tipo tipo) throws SQLException{
-        String sql = "SELECT * FROM Conta WHERE tipo = ?";
-        List<Conta> contas = new ArrayList();
+    public List<Contas> buscarTipo(ContaTipo tipo) throws SQLException{
+        String sql = "SELECT * FROM Contas WHERE tipo = ?";
+        List<Contas> contas = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -223,12 +223,12 @@ public class DaoConta {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 // criando o objeto Usuario
-                Conta conta = new Conta(
+                Contas conta = new Contas(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getFloat(4),
-                        Tipo.valueOf(rs.getString(5)));
+                        ContaTipo.valueOf(rs.getString(5)));
                 // adiciona o usu à lista de usus
                 contas.add(conta);
             }
@@ -236,23 +236,23 @@ public class DaoConta {
         return contas;
     }
 
-    public List<Conta> listar() throws SQLException{
+    public List<Contas> listar() throws SQLException{
         // usus: array armazena a lista de registros
 
-        List<Conta> contas = new ArrayList<>();
+        List<Contas> contas = new ArrayList<>();
         
-        String sql = "SELECT * FROM Conta";
+        String sql = "SELECT * FROM Contas";
         try (PreparedStatement stmt = this.con.prepareStatement(sql); 
                 ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
                 // criando o objeto Usuario
-                Conta conta = new Conta(
+                Contas conta = new Contas(
                         rs.getInt(1),
                         rs.getInt(2),
                         rs.getInt(3),
                         rs.getFloat(4),
-                        Tipo.valueOf(rs.getString(5))
+                        ContaTipo.valueOf(rs.getString(5))
                 );
                 // adiciona o usu à lista de usus
                 contas.add(conta);
@@ -262,8 +262,8 @@ public class DaoConta {
         return contas;
    }
    
-    public void alterarGerente(int idNovo, int idAntigo) throws SQLException {
-        String sql = "UPDATE Conta SET idGerente = ? WHERE idGerente = ?";
+    public void alterarUsuario(int idNovo, int idAntigo) throws SQLException {
+        String sql = "UPDATE Contas SET idUsuario = ? WHERE idUsuario = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {

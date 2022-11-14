@@ -7,22 +7,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import meubancov2.models.beans.Cliente;
+import meubancov2.models.beans.Clientes;
 import meubancov2.utils.Conexao;
 
 /**
  *
  * @author scar
  */
-public class DaoCliente {
+public class DaoClientes {
     private final Connection con;
 
-    public DaoCliente() throws SQLException, ClassNotFoundException {
+    public DaoClientes() throws SQLException, ClassNotFoundException {
         this.con = new Conexao().getConnection();
     }
     
-    public Cliente inserir(Cliente clien) throws SQLException{
-        String sql = "insert into Cliente" + " values (default, ?, ?, ?, ?, ?)";
+    public Clientes inserir(Clientes clien) throws SQLException{
+        String sql = "insert into Clientes" + " values (default, ?, ?, ?, ?, ?)";
     
         // prepared statement para inserção
         PreparedStatement stmt = con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
@@ -45,9 +45,9 @@ public class DaoCliente {
         return clien;
     }
     
-    public Cliente buscarId(int id) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE id = ?";
-        Cliente clienSaida;
+    public Clientes buscarId(int id) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE id = ?";
+        Clientes clienSaida;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -57,7 +57,7 @@ public class DaoCliente {
             clienSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                clienSaida = new Cliente(
+                clienSaida = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -70,9 +70,9 @@ public class DaoCliente {
         return clienSaida;
     }
     
-    public List<Cliente> buscarNome(String nome) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE nome like ?";
-        List<Cliente> cliens = new ArrayList();
+    public List<Clientes> buscarNome(String nome) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE nome like ?";
+        List<Clientes> cliens = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -81,7 +81,7 @@ public class DaoCliente {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 // criando o objeto Usuario
-                Cliente clien = new Cliente(
+                Clientes clien = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -95,9 +95,9 @@ public class DaoCliente {
         return cliens;
     }
     
-    public Cliente buscarRg(String rg) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE rg = ?";
-        Cliente clienSaida;
+    public Clientes buscarRg(String rg) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE rg = ?";
+        Clientes clienSaida;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -107,7 +107,7 @@ public class DaoCliente {
             clienSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                clienSaida = new Cliente(
+                clienSaida = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -120,9 +120,9 @@ public class DaoCliente {
         return clienSaida;
     }
     
-    public Cliente buscarCpf(String cpf) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE cpf = ?";
-        Cliente clienSaida;
+    public Clientes buscarCpf(String cpf) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE cpf = ?";
+        Clientes clienSaida;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -132,7 +132,7 @@ public class DaoCliente {
             clienSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                clienSaida = new Cliente(
+                clienSaida = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -145,9 +145,9 @@ public class DaoCliente {
         return clienSaida;
     }
     
-    public List<Cliente> buscarEmail(String email) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE email like ?";
-        List<Cliente> cliens = new ArrayList();
+    public List<Clientes> buscarEmail(String email) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE email like ?";
+        List<Clientes> cliens = new ArrayList();
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -156,7 +156,7 @@ public class DaoCliente {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 // criando o objeto Usuario
-                Cliente clien = new Cliente(
+                Clientes clien = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -170,9 +170,9 @@ public class DaoCliente {
         return cliens;
     }
     
-    public Cliente buscarTelefone(String telefone) throws SQLException{
-        String sql = "SELECT * FROM Cliente WHERE telefone = ?";
-        Cliente clienSaida;
+    public Clientes buscarTelefone(String telefone) throws SQLException{
+        String sql = "SELECT * FROM Clientes WHERE telefone = ?";
+        Clientes clienSaida;
         // seta os valores
         try (PreparedStatement stmt = this.con.prepareStatement(sql)) {
             // seta os valores
@@ -182,7 +182,7 @@ public class DaoCliente {
             clienSaida = null;
             while (rs.next()) {
                 // criando o objeto Usuario
-                clienSaida = new Cliente(
+                clienSaida = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -196,7 +196,8 @@ public class DaoCliente {
     }
     
     public void alterarTudo(int id, String nome, String rg, String cpf, String email, String telefone) throws SQLException{
-        String sql = "UPDATE Cliente SET nome = ?, rg = ?, cpf = ?, email = ?, telefone = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET nome = ?, rg = ?," +
+                "cpf = ?, email = ?, telefone = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -214,7 +215,7 @@ public class DaoCliente {
     }
     
     public void alterarNome(int id, String nome) throws SQLException{
-        String sql = "UPDATE Cliente SET nome = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET nome = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -228,7 +229,7 @@ public class DaoCliente {
     }
     
     public void alterarRg(int id, String rg) throws SQLException{
-        String sql = "UPDATE Cliente SET rg = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET rg = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -242,7 +243,7 @@ public class DaoCliente {
     }
     
     public void alterarCpf(int id, String cpf) throws SQLException{
-        String sql = "UPDATE Cliente SET cpf = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET cpf = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -256,7 +257,7 @@ public class DaoCliente {
     }
     
     public void alterarEmail(int id, String email) throws SQLException{
-        String sql = "UPDATE Cliente SET email = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET email = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -270,7 +271,7 @@ public class DaoCliente {
     }
     
     public void alterarTelefone(int id, String telefone) throws SQLException{
-        String sql = "UPDATE Cliente SET telefone = ? WHERE id = ?";
+        String sql = "UPDATE Clientes SET telefone = ? WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -284,7 +285,7 @@ public class DaoCliente {
     }
     
     public void excluir(int id) throws SQLException{
-        String sql = "DELETE FROM Cliente WHERE id = ?";
+        String sql = "DELETE FROM Clientes WHERE id = ?";
         // seta os valores
         try ( // prepared statement para inserção
                 PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -295,18 +296,18 @@ public class DaoCliente {
         }
     }
     
-    public List<Cliente> listar() throws SQLException{
+    public List<Clientes> listar() throws SQLException{
         // usus: array armazena a lista de registros
 
-        List<Cliente> cliens = new ArrayList<>();
+        List<Clientes> cliens = new ArrayList<>();
         
-        String sql = "SELECT * FROM Cliente";
+        String sql = "SELECT * FROM Clientes";
         try (PreparedStatement stmt = this.con.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
                 // criando o objeto Usuario
-                Cliente clien = new Cliente(
+                Clientes clien = new Clientes(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
